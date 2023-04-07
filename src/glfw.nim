@@ -45,7 +45,7 @@ else:
       compile: "glfw/private/glfw/src/egl_context.c",
       compile: "glfw/private/glfw/src/osmesa_context.c".}
   elif defined(macosx):
-    {.passC: gorge("pkg-config --static --cflags glfw3") & "-D_GLFW_BUILD_DLL -D_GLFW_COCOA -D_GLFW_NSGL -D_GLFW_USE_CHDIR -D_GLFW_USE_MENUBAR -D_GLFW_USE_RETINA",
+    {.passC: "-D_GLFW_COCOA -D_GLFW_NSGL -D_GLFW_USE_CHDIR -D_GLFW_USE_MENUBAR -D_GLFW_USE_RETINA",
       passL: gorge("pkg-config --static --libs glfw3"),
       compile: "glfw/private/glfw/src/cocoa_init.m",
       compile: "glfw/private/glfw/src/cocoa_joystick.m",
