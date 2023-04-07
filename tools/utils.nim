@@ -16,7 +16,6 @@ const srcHeader* = """
 
 import ./glfw/private/logo, os
 putEnv("PKG_CONFIG_PATH","glfw/private/glfw/src")
-{.compile: "glfw/private/glfw/src/internal.h".}
 
 when defined(glfwDLL):
   when defined(windows):
