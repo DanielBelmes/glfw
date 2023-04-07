@@ -23,7 +23,7 @@ when defined(glfwDLL):
   when defined(windows):
     const glfw_dll* = "glfw3.dll"
   elif defined(macosx):
-    const glfw_dll* = "libglfw3.dylib"
+    const glfw_dll* = "libglfw.3.dylib"
   else:
     const glfw_dll* = "libglfw.so.3"
 
@@ -61,6 +61,8 @@ proc getWin32Adapter*(monitor: GLFWMonitor): cstring {.importc: "glfwGetWin32Ada
   ## of the specified monitor, or `NULL` if an error
   ## occurred.
   ##
+  ## @errors Possible errors include  GLFW_NOT_INITIALIZED.
+  ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
   ##
@@ -74,6 +76,8 @@ proc getWin32Monitor*(monitor: GLFWMonitor): cstring {.importc: "glfwGetWin32Mon
   ## `\\.\DISPLAY1\Monitor0`) of the specified monitor, or `NULL` if an
   ## error occurred.
   ##
+  ## @errors Possible errors include  GLFW_NOT_INITIALIZED.
+  ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
   ##
@@ -85,6 +89,8 @@ proc getWin32Window*(window: GLFWWindow): pointer #[HWND]# {.importc: "glfwGetWi
   ##
   ## @return The `HWND` of the specified window, or `NULL` if an
   ## error occurred.
+  ##
+  ## @errors Possible errors include  GLFW_NOT_INITIALIZED.
   ##
   ## @remark The `HDC` associated with the window can be queried with the
   ## [GetDC](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getdc)
@@ -106,6 +112,9 @@ proc getWGLContext*(window: GLFWWindow): pointer #[HGLRC]# {.importc: "glfwGetWG
   ## @return The `HGLRC` of the specified window, or `NULL` if an
   ## error occurred.
   ##
+  ## @errors Possible errors include  GLFW_NO_WINDOW_CONTEXT and 
+  ## GLFW_NOT_INITIALIZED.
+  ##
   ## @remark The `HDC` associated with the window can be queried with the
   ## [GetDC](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getdc)
   ## function.
@@ -126,6 +135,8 @@ proc getCocoaMonitor*(monitor: GLFWMonitor): pointer #[CGDirectDisplayID]# {.imp
   ## @return The `CGDirectDisplayID` of the specified monitor, or
   ## `kCGNullDirectDisplay` if an error occurred.
   ##
+  ## @errors Possible errors include  GLFW_NOT_INITIALIZED.
+  ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
   ##
@@ -137,6 +148,8 @@ proc getCocoaWindow*(window: GLFWWindow): pointer #[id]# {.importc: "glfwGetCoco
   ##
   ## @return The `NSWindow` of the specified window, or `nil` if an
   ## error occurred.
+  ##
+  ## @errors Possible errors include  GLFW_NOT_INITIALIZED.
   ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
@@ -150,6 +163,9 @@ proc getNSGLContext*(window: GLFWWindow): pointer #[id]# {.importc: "glfwGetNSGL
   ## @return The `NSOpenGLContext` of the specified window, or `nil` if an
   ## error occurred.
   ##
+  ## @errors Possible errors include  GLFW_NO_WINDOW_CONTEXT and 
+  ## GLFW_NOT_INITIALIZED.
+  ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
   ##
@@ -161,6 +177,8 @@ proc glfwGetX11Display*(): pointer #[Display]# {.importc: "glfwGetX11Display".}
   ##
   ## @return The `Display` used by GLFW, or `NULL` if an
   ## error occurred.
+  ##
+  ## @errors Possible errors include  GLFW_NOT_INITIALIZED.
   ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
@@ -174,6 +192,8 @@ proc getX11Adapter*(monitor: GLFWMonitor): pointer #[RRCrtc]# {.importc: "glfwGe
   ## @return The `RRCrtc` of the specified monitor, or `None` if an
   ## error occurred.
   ##
+  ## @errors Possible errors include  GLFW_NOT_INITIALIZED.
+  ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
   ##
@@ -186,6 +206,8 @@ proc getX11Monitor*(monitor: GLFWMonitor): pointer #[RROutput]# {.importc: "glfw
   ## @return The `RROutput` of the specified monitor, or `None` if an
   ## error occurred.
   ##
+  ## @errors Possible errors include  GLFW_NOT_INITIALIZED.
+  ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
   ##
@@ -197,6 +219,8 @@ proc getX11Window*(window: GLFWWindow): pointer #[Window]# {.importc: "glfwGetX1
   ##
   ## @return The `Window` of the specified window, or `None` if an
   ## error occurred.
+  ##
+  ## @errors Possible errors include  GLFW_NOT_INITIALIZED.
   ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
@@ -256,6 +280,9 @@ proc getGLXContext*(window: GLFWWindow): pointer #[GLXContext]# {.importc: "glfw
   ## @return The `GLXContext` of the specified window, or `NULL` if an
   ## error occurred.
   ##
+  ## @errors Possible errors include  GLFW_NO_WINDOW_CONTEXT and 
+  ## GLFW_NOT_INITIALIZED.
+  ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
   ##
@@ -267,6 +294,9 @@ proc getGLXWindow*(window: GLFWWindow): pointer #[GLXWindow]# {.importc: "glfwGe
   ##
   ## @return The `GLXWindow` of the specified window, or `None` if an
   ## error occurred.
+  ##
+  ## @errors Possible errors include  GLFW_NO_WINDOW_CONTEXT and 
+  ## GLFW_NOT_INITIALIZED.
   ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
@@ -280,6 +310,8 @@ proc getWaylandDisplay*(): pointer #[struct]# {.importc: "glfwGetWaylandDisplay"
   ## @return The `struct wl_display*` used by GLFW, or `NULL` if an
   ## error occurred.
   ##
+  ## @errors Possible errors include  GLFW_NOT_INITIALIZED.
+  ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
   ##
@@ -291,6 +323,8 @@ proc getWaylandMonitor*(monitor: GLFWMonitor): pointer #[struct]# {.importc: "gl
   ##
   ## @return The `struct wl_output*` of the specified monitor, or `NULL` if an
   ## error occurred.
+  ##
+  ## @errors Possible errors include  GLFW_NOT_INITIALIZED.
   ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
@@ -304,6 +338,8 @@ proc getWaylandWindow*(window: GLFWWindow): pointer #[struct]# {.importc: "glfwG
   ## @return The main `struct wl_surface*` of the specified window, or `NULL` if
   ## an error occurred.
   ##
+  ## @errors Possible errors include  GLFW_NOT_INITIALIZED.
+  ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
   ##
@@ -315,6 +351,11 @@ proc glfwGetEGLDisplay*(): pointer #[EGLDisplay]# {.importc: "glfwGetEGLDisplay"
   ##
   ## @return The `EGLDisplay` used by GLFW, or `EGL_NO_DISPLAY` if an
   ## error occurred.
+  ##
+  ## @errors Possible errors include  GLFW_NOT_INITIALIZED.
+  ##
+  ## @remark Because EGL is initialized on demand, this function will return
+  ## `EGL_NO_DISPLAY` until the first context has been created via EGL.
   ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
@@ -328,6 +369,9 @@ proc getEGLContext*(window: GLFWWindow): pointer #[EGLContext]# {.importc: "glfw
   ## @return The `EGLContext` of the specified window, or `EGL_NO_CONTEXT` if an
   ## error occurred.
   ##
+  ## @errors Possible errors include  GLFW_NO_WINDOW_CONTEXT and 
+  ## GLFW_NOT_INITIALIZED.
+  ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
   ##
@@ -339,6 +383,9 @@ proc getEGLSurface*(window: GLFWWindow): pointer #[EGLSurface]# {.importc: "glfw
   ##
   ## @return The `EGLSurface` of the specified window, or `EGL_NO_SURFACE` if an
   ## error occurred.
+  ##
+  ## @errors Possible errors include  GLFW_NO_WINDOW_CONTEXT and 
+  ## GLFW_NOT_INITIALIZED.
   ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
@@ -359,6 +406,9 @@ proc getOSMesaColorBuffer*(window: GLFWWindow, width: ptr int32, height: ptr int
   ## @return `GLFW_TRUE` if successful, or `GLFW_FALSE` if an
   ## error occurred.
   ##
+  ## @errors Possible errors include  GLFW_NO_WINDOW_CONTEXT and 
+  ## GLFW_NOT_INITIALIZED.
+  ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
   ##
@@ -378,6 +428,9 @@ proc getOSMesaDepthBuffer*(window: GLFWWindow, width: ptr int32, height: ptr int
   ## @return `GLFW_TRUE` if successful, or `GLFW_FALSE` if an
   ## error occurred.
   ##
+  ## @errors Possible errors include  GLFW_NO_WINDOW_CONTEXT and 
+  ## GLFW_NOT_INITIALIZED.
+  ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.
   ##
@@ -389,6 +442,9 @@ proc getOSMesaContext*(window: GLFWWindow): pointer #[OSMesaContext]# {.importc:
   ##
   ## @return The `OSMesaContext` of the specified window, or `NULL` if an
   ## error occurred.
+  ##
+  ## @errors Possible errors include  GLFW_NO_WINDOW_CONTEXT and 
+  ## GLFW_NOT_INITIALIZED.
   ##
   ## @thread_safety This function may be called from any thread.  Access is not
   ## synchronized.

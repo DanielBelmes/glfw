@@ -1,6 +1,6 @@
 # Written by Leonardo Mariscal <leo@ldmd.mx>, 2019
 
-import strutils, streams, sequtils, ./utils, strformat, tables
+import strutils, streams, sequtils, ./utils, strformat, tables, re
 
 var opaqueTypes: seq[string]
 
@@ -59,7 +59,8 @@ proc translateType*(name: string): string =
     result = result.replace("int", "int32")
   result = result.replace("float", "float32")
   result = result.replace("double", "float64")
-  result = result.replace("size_t", "uint") # uint matches pointer size just like size_t
+  if(result == "size"):
+    result = "csize_t"
 
   if result.contains("char") and not result.contains("Wchar"):
     if result.contains("uchar"):
@@ -82,7 +83,7 @@ proc translateType*(name: string): string =
   # Native Please let me know if this doesn't work for you
   let nativeTypes = ["HWND", "HGLRC", "CGDirectDisplayID", "id", "RRCrtc", "RROutput",
                      "Window", "GLXContext", "struct", "GLXWindow", "EGLDisplay", "EGLContext",
-                     "EGLSurface", "OSMesaContext"]
+                     "EGLSurface", "OSMesaContext", "PFN_vkGetInstanceProcAddr"]
   if nativeTypes.contains(result):
     result = "pointer #[{result}]#".fmt
 
@@ -245,14 +246,13 @@ proc genTypes*(output: var string) =
           isDocumentation = false
 
     if line.startsWith("typedef"):
-      line = line.replace("* ", "*")
+      line = line.replace("(* ", "(*")
       line = line.replace("unsigned int", "uint32")
       line = line.replace("const char", "char")
-      let parts = line.split(" ").filter(proc (x: string): bool = x != "" and x != "typedef")
+      let parts = line.split(" ", 2).filter(proc (x: string): bool = x != "" and x != "typedef")
       if parts[0] == "struct":
         continue
-
-      let procType = parts[0]
+      let procType = translateType(parts[0])
 
       var procParts = parts[1].split(')')
       var procName = procParts[0][2 ..< procParts[0].len]
@@ -261,18 +261,15 @@ proc genTypes*(output: var string) =
       procName = procName.replace("proc", "Proc")
 
       procParts[1] = procParts[1][1 ..< procParts[1].len]
-      var argsTypes = procParts[1].split(',')
-      argsTypes = argsTypes.map(translateType)
-      argsTypes = argsTypes.filter(proc (x: string): bool = x != "void" and x != "")
-
+      var argsPairs: seq[string] = procParts[1].replace(", ",",").split(',')
+      var args = argsPairs.map(proc (x: string): seq[string] = x.split(' '))
+      var argsTypes: seq[string]
       var argsNames: seq[string]
-
-      for docLine in documentation.split("\n"):
-        if not docLine.startsWith("    ## @param[in] "):
-          continue
-        var docType = docLine["    ## @param[in] ".len ..< docLine.len]
-        var docParts = docType.split(" ")
-        argsNames.add(docParts[0])
+      for arg in args:
+        if(arg[0] != "void" and arg[0] != ""):
+          argsTypes.add(translateType(arg[0]))
+          argsNames.add(arg[1].replace("block","mBlock").replace("[]",""))
+      argsTypes = argsTypes.filter(proc (x: string): bool = x != "void" and x != "")
 
       var procSig = "  {procName}* = proc(".fmt
       for i in 0 ..< argsTypes.len:

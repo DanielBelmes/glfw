@@ -14,13 +14,15 @@ const srcHeader* = """
 ##
 ## You can check the original documentation `here <http://www.glfw.org/docs/latest/>`_.
 
-import ./glfw/private/logo
+import ./glfw/private/logo, os
+putEnv("PKG_CONFIG_PATH","glfw/private/glfw/src")
+{.compile: "glfw/private/glfw/src/internal.h".}
 
 when defined(glfwDLL):
   when defined(windows):
     const glfw_dll* = "glfw3.dll"
   elif defined(macosx):
-    const glfw_dll* = "libglfw3.dylib"
+    const glfw_dll* = "libglfw.3.dylib"
   else:
     const glfw_dll* = "libglfw.so.3"
 else:
@@ -46,15 +48,16 @@ else:
       compile: "glfw/private/glfw/src/egl_context.c",
       compile: "glfw/private/glfw/src/osmesa_context.c".}
   elif defined(macosx):
-    {.passC: "-D_GLFW_COCOA -D_GLFW_USE_CHDIR -D_GLFW_USE_MENUBAR -D_GLFW_USE_RETINA",
-      passL: "-framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo",
+    {.passC: gorge("pkg-config --static --cflags glfw3") & "-D_GLFW_BUILD_DLL -D_GLFW_COCOA -D_GLFW_NSGL -D_GLFW_USE_CHDIR -D_GLFW_USE_MENUBAR -D_GLFW_USE_RETINA",
+      passL: gorge("pkg-config --static --libs glfw3"),
       compile: "glfw/private/glfw/src/cocoa_init.m",
       compile: "glfw/private/glfw/src/cocoa_joystick.m",
       compile: "glfw/private/glfw/src/cocoa_monitor.m",
       compile: "glfw/private/glfw/src/cocoa_window.m",
-      compile: "glfw/private/glfw/src/cocoa_time.c",
-      compile: "glfw/private/glfw/src/posix_thread.c",
       compile: "glfw/private/glfw/src/nsgl_context.m",
+      compile: "glfw/private/glfw/src/cocoa_time.c",
+      compile: "glfw/private/glfw/src/posix_module.c",
+      compile: "glfw/private/glfw/src/posix_thread.c",
       compile: "glfw/private/glfw/src/egl_context.c",
       compile: "glfw/private/glfw/src/osmesa_context.c".}
   else:
@@ -89,6 +92,11 @@ else:
       compile: "glfw/private/glfw/src/init.c",
       compile: "glfw/private/glfw/src/input.c",
       compile: "glfw/private/glfw/src/monitor.c",
+      compile: "glfw/private/glfw/src/platform.c",
+      compile: "glfw/private/glfw/src/null_init.c",
+      compile: "glfw/private/glfw/src/null_joystick.c",
+      compile: "glfw/private/glfw/src/null_monitor.c",
+      compile: "glfw/private/glfw/src/null_window.c",
       compile: "glfw/private/glfw/src/window.c".}
 
 when defined(vulkan):
@@ -125,7 +133,7 @@ when defined(glfwDLL):
   when defined(windows):
     const glfw_dll* = "glfw3.dll"
   elif defined(macosx):
-    const glfw_dll* = "libglfw3.dylib"
+    const glfw_dll* = "libglfw.3.dylib"
   else:
     const glfw_dll* = "libglfw.so.3"
 
@@ -182,6 +190,11 @@ const typeDefinitions* = """
     ## This describes the input state of a gamepad.
     buttons*: array[15, bool]
     axes*: array[6, float32]
+  GLFWallocator* = object
+    ## This allocates memory??? I haven't checked
+    allocate: pointer
+    reallocate: pointer
+    deallocate: void
 """
 
 let boolProcs* = [
