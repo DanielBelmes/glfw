@@ -97,10 +97,7 @@ else:
       compile: "glfw/private/glfw/src/window.c".}
 
 when defined(vulkan):
-  when not defined(nonimgl):
-    import nimgl/vulkan # By default loads nimgl/vulkan
-  else:
-    import vulkan
+    import vulkan #not using nimgl at the moment when testing
 
 
 # Constants and Enums
