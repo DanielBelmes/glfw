@@ -11,8 +11,7 @@
 ##
 ## You can check the original documentation `here <http://www.glfw.org/docs/latest/>`_.
 
-import ./glfw/private/logo, os
-putEnv("PKG_CONFIG_PATH","glfw/private/glfw/src")
+import ./glfw/private/logo
 
 when defined(glfwDLL):
   when defined(windows):
@@ -45,7 +44,7 @@ else:
       compile: "glfw/private/glfw/src/osmesa_context.c".}
   elif defined(macosx):
     {.passC: "-D_GLFW_COCOA -D_GLFW_NSGL -D_GLFW_USE_CHDIR -D_GLFW_USE_MENUBAR -D_GLFW_USE_RETINA",
-      passL: gorge("pkg-config --static --libs glfw3"),
+      passL: "-framework Cocoa -framework IOKit -framework CoreFoundation",
       compile: "glfw/private/glfw/src/cocoa_init.m",
       compile: "glfw/private/glfw/src/cocoa_joystick.m",
       compile: "glfw/private/glfw/src/cocoa_monitor.m",
