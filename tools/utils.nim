@@ -42,6 +42,7 @@ else:
       compile: "glfw/private/glfw/src/win32_time.c",
       compile: "glfw/private/glfw/src/win32_thread.c",
       compile: "glfw/private/glfw/src/win32_window.c",
+      compile: "glfw/private/glfw/src/win32_module.c",
       compile: "glfw/private/glfw/src/wgl_context.c",
       compile: "glfw/private/glfw/src/egl_context.c",
       compile: "glfw/private/glfw/src/osmesa_context.c".}
@@ -83,6 +84,8 @@ else:
       compile: "glfw/private/glfw/src/posix_time.c",
       compile: "glfw/private/glfw/src/egl_context.c",
       compile: "glfw/private/glfw/src/osmesa_context.c",
+      compile: "glfw/private/glfw/src/posix_poll.c",
+      compile: "glfw/private/glfw/src/posix_module.c",
       compile: "glfw/private/glfw/src/posix_thread.c".}
 
   when not defined(emscripten):
